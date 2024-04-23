@@ -14,11 +14,10 @@
 
 bool isValidDate(const std::string &date)
 {
-	std::tm				tm = {};
-	std::istringstream	ss(date);
+	std::tm tm = {};
+	char *end = strptime(date.c_str(), "%Y-%m-%d", &tm);
 
-	ss >> std::get_time(&tm, "%Y-%m-%d");
-	if (ss.fail())
+	if (end != &date[date.size()])
 		return (std::cerr << "Error: Invalid date format: " << date << std::endl, false);
 	if (tm.tm_year < 0 || tm.tm_year > 200)
 		return (std::cerr << "Error: Invalid year: " << date << std::endl, false);
@@ -68,31 +67,35 @@ void readFile(std::ifstream &file, std::string key, BitcoinExchange &exchange, v
 	std::string	line;
 	while (std::getline(file, line))
 	{
-        double				value;
-        std::string			date;
-        std::string			separator;
-
+		double		value;
+		std::string	date;
+		std::string	separator;
+	
 		if (line.empty() || line.find_first_not_of(" \t\n\v\f\r") == std::string::npos || line[0] == '#'
-			|| std::strcmp(line.c_str(), "date | value") == 0 || std::strcmp(line.c_str(), "date,exchange_rate") == 0)
+		|| strcmp(line.c_str(), "date | value") == 0 || strcmp(line.c_str(), "date,exchange_rate") == 0)
 			continue ;
-		if (line.find(',') != std::string::npos)
-			line = std::regex_replace(line, std::regex(","), " , ");
-
-        std::istringstream iss(line);
-        if (!(iss >> date >> separator >> value))
-        {
-            std::cerr << "Error: Invalid line format: " << line << std::endl;
-            continue ;
-        }
-        if (separator != key)
-        {
-            std::cerr << "Error: Invalid separator: " << separator << std::endl;
-            continue ;
-        }
-        if (!isValidDate(date))
+		size_t pos = line.find(',');
+		if (pos != std::string::npos)
+			line.replace(pos, 1, " , ");
+	
+		std::istringstream	iss(line);
+		if (!(iss >> date >> separator >> value))
+		{
+			std::cerr << "Error: Invalid line format: " << line << std::endl;
 			continue ;
-		if (key == "|" && (!isPositiveValue(std::to_string(value)) || !isInRangeValue(std::to_string(value))))
-            continue ;
+		}
+		if (separator != key)
+		{
+			std::cerr << "Error: Invalid separator: " << separator << std::endl;
+			continue ;
+		}
+		if (!isValidDate(date))
+			continue ;
+		std::ostringstream	strs;
+		strs << value;
+		std::string str_value = strs.str();
+		if (key == "|" && (!isPositiveValue(str_value) || !isInRangeValue(str_value)))
+				continue ;
 		(exchange.*f)(date, value);
 	}
 }

@@ -15,10 +15,15 @@
 
 # include <algorithm>
 # include <iostream>
+# include <iomanip>
 # include <sstream>
 # include <fstream>
-# include <regex>
+# include <cstring>
+# include <string>
+# include <ctime>
 # include <map>
+
+typedef std::map<std::string, double>::iterator map_it;
 
 class BitcoinExchange
 {
@@ -34,6 +39,7 @@ class BitcoinExchange
 
 		void addCurrency(std::string const &date, double value);
 		void displayCurrency(std::string const &date, double value);
+		void displayCurrencyInRange(std::string const &date, double value, map_it lower, map_it upper);
 };
 
 void readFile(std::ifstream &file, std::string key, BitcoinExchange &exchange, void (BitcoinExchange::*f)(std::string const &, double));

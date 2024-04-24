@@ -31,19 +31,18 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &rhs)
 	return (*this);
 }
 
-#include <sstream>
-
 int PmergeMe::parse(int argc, char **argv)
 {
 	if (argc <= 1)
-		return (std::cerr << "Error: No sequence provided as argument." << std::endl, 1);
+		return (std::cerr << "Error: No sequence provided as argument" << std::endl, 1);
 	for (int i = 1; i < argc; ++i)
 	{
 		std::stringstream ss(argv[i]);
 		int num;
-		ss >> num;
+		if (!(ss >> num))
+			return(std::cerr << "Error: Non-numeric character found in the sequence" << std::endl, 1);
 		if (num < 0)
-			return(std::cerr << "Error: Negative integer found in the sequence." << std::endl, 1);
+			return(std::cerr << "Error: Negative integer found in the sequence" << std::endl, 1);
 		_vector.push_back(num);
 		_deque.push_back(num);
 	}
@@ -57,18 +56,21 @@ int PmergeMe::parse(int argc, char **argv)
 
 int PmergeMe::merge(int argc, char **argv)
 {
+	double elapsedTimeVector;
+	double elapsedTimeDeque;
+
 	if (parse(argc, argv))
 		return (1);
 
 	clock_t startVector = clock();
-	mergeInsertSort(_vector);
+	fordJohnsonSort(_vector);
 	clock_t endVector = clock();
 	elapsedTimeVector = (double)(endVector - startVector) / CLOCKS_PER_SEC * 1000;
 
 	clock_t startDeque = clock();
 	fordJohnsonSort(_deque);
 	clock_t endDeque = clock();
-	double elapsedTimeDeque = double(endDeque - startDeque) / CLOCKS_PER_SEC * 1000;
+	elapsedTimeDeque = (double)(endDeque - startDeque) / CLOCKS_PER_SEC * 1000;
 
 	std::cout << "Sorted  sequence: ";
 	display(_vector);

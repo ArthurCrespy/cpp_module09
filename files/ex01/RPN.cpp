@@ -23,7 +23,8 @@ RPN::~RPN(void) {}
 
 RPN &RPN::operator=(const RPN &rhs)
 {
-	if (this != &rhs) {}
+	if (this != &rhs)
+		_stack = rhs._stack;
 	return (*this);
 }
 

@@ -20,9 +20,10 @@ int main(int argc, char **argv)
 		return (std::cerr << "Usage: ./bitcoin [filename]" << std::endl, 1);
 
 	std::ifstream	input(argv[1]);
-	std::ifstream 	db("data.csv");
 	if (!input.is_open() || !input.good() || input.bad())
 		return (std::cerr << "Error: could not open input file" << std::endl, 1);
+
+	std::ifstream 	db("data.csv");
 	if (!db.is_open() || !db.good() || db.bad())
 		return (input.close(), std::cerr << "Error: could not open database file" << std::endl, 1);
 

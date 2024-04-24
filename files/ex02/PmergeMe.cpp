@@ -63,10 +63,10 @@ int PmergeMe::merge(int argc, char **argv)
 	clock_t startVector = clock();
 	mergeInsertSort(_vector);
 	clock_t endVector = clock();
-	double elapsedTimeVector = double(endVector - startVector) / CLOCKS_PER_SEC * 1000;
+	elapsedTimeVector = (double)(endVector - startVector) / CLOCKS_PER_SEC * 1000;
 
 	clock_t startDeque = clock();
-	mergeInsertSort(_deque);
+	fordJohnsonSort(_deque);
 	clock_t endDeque = clock();
 	double elapsedTimeDeque = double(endDeque - startDeque) / CLOCKS_PER_SEC * 1000;
 
